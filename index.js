@@ -31,7 +31,7 @@ client.on("messageCreate", async (message) => {
     return;
   }
 
-  if (message.channelId !== patchesId && message.channelId !== announceId) {
+  if (message.channelId != patchesId && message.channelId != announceId) {
     return;
   }
 
@@ -57,7 +57,6 @@ client.on("messageCreate", async (message) => {
 
 const translate = async (msg) => {
   const result = await translator.translateText(msg, "en", "fr");
-  console.log(result.text);
   return result.text;
 };
 
