@@ -30,4 +30,5 @@ jobs:
         run: cd /home/github/bloc-notes-bot
 
       - name: Installation des dépendance
-        run: npm ci
+        run: pwd
+        run: npm i
