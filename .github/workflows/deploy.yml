@@ -23,5 +23,10 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
 
+      - name: Copie dans le dossier du projet
+        run : cp /home/github/actions-runner/_work/bloc-notes-bot/bloc-notes-bot/. /home/github/bloc-notes-bot
+
       - name: Installation des dépendance
         run: npm ci
+
+      
