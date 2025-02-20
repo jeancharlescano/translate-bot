@@ -25,31 +25,48 @@ client.once(Events.ClientReady, (readyClient) => {
 client.on("messageCreate", async (message) => {
   const announceId = "1220073639987249174";
   const patchesId = "1220073409971621948";
+  // const debugChannelId = "1032291594000416840";
   let channel;
 
-  if (message.author.bot) {
+  console.log(
+    `Message reçu dans ${message.channelId} par ${message.author.tag} (id : ${message.author.id}) (webhookId: ${message.webhookId}) \n ${message.content}`
+  );
+
+  // On sort si le message vien du bot
+  if (message.author.id === "1214565174472609852") {
+    console.warn("🚧 Message du bot.. Skip");
     return;
   }
 
-  if (message.channelId != patchesId && message.channelId != announceId) {
+  //On sort si le message vien d'un autre channel que Tabor:Annonces et Tabor:Patches
+  if (
+    message.channelId != patchesId &&
+    message.channelId != announceId &&
+    message.channelId != debugChannelId
+  ) {
+    console.error("🚨 Message ailleur quand dans les channel prévu");
     return;
   }
 
   const msgTranslated = await translate(message.content);
+  console.log("🚀 ~ client.on ~ msgTranslated:", msgTranslated);
 
-  message.channelId === announceId
-    ? (channel = client.channels.cache.get(announceId))
-    : (channel = client.channels.cache.get(patchesId));
+  switch (message.channelId) {
+    case announceId:
+      channel = client.channels.cache.get(announceId);
+      break;
+    case patchesId:
+      channel = client.channels.cache.get(patchesId);
+      break;
+    default:
+      channel = client.channels.cache.get(debugChannelId);
+  }
 
   if (channel) {
     await channel
       .send(msgTranslated)
       .then((message) => console.log(`Sent message: ${message.content}`))
       .catch(console.error);
-    // await message
-    //   .reply(message.content)
-    //   .then((message) => console.log(`Sent message: ${message.content}`))
-    //   .catch(console.error);
     return;
   }
   return;
@@ -57,6 +74,7 @@ client.on("messageCreate", async (message) => {
 
 const translate = async (msg) => {
   const result = await translator.translateText(msg, "en", "fr");
+  console.log(`message traduit : \n ${result.text}`);
   return result.text;
 };
 
