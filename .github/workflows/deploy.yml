@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: ["master"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -20,10 +20,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: npm i
+      - name: Checkout du code
+      - uses: actions/checkout@v4
+
+      - name: Installation des dépendance
+      - run: npm ci
+
+      - name: Redémarrage avec pm2
+      - run: |
+          pm2 list | grep bloc-not-bot && pm2 restart bloc-not-bot || pm2 start index.js --name bloc-not-bot
