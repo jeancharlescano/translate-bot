@@ -21,11 +21,11 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout du code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Installation des dépendance
-      - run: npm ci
+        run: npm ci
 
       - name: Redémarrage avec pm2
-      - run: |
+        run: |
           pm2 list | grep bloc-not-bot && pm2 restart bloc-not-bot || pm2 start index.js --name bloc-not-bot
