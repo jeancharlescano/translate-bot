@@ -26,8 +26,7 @@ jobs:
       - name: Copie dans le dossier du projet
         run: cp -rf /home/github/actions-runner/_work/bloc-notes-bot/bloc-notes-bot/. /home/github/bloc-notes-bot
 
-      - name: Déplacement vers le répertoire du projet
-        run: cd /home/github/bloc-notes-bot
-
       - name: Installation des dépendance
-        run: pwd && npm i
+        run: |
+          cp -rf /home/github/actions-runner/_work/bloc-notes-bot/bloc-notes-bot/. /home/github/bloc-notes-bot
+          cd /home/github/bloc-notes-bot && pwd && npm i
