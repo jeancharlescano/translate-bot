@@ -33,23 +33,22 @@ client.on("messageCreate", async (message) => {
   );
 
   // On sort si le message vien du bot
-  if (message.author.id === "1214565174472609852") {
-    console.warn("🚧 Message du bot.. Skip");
+  if (message.webhookId === "null") {
+    console.warn("🚧 Message interne skip...");
     return;
   }
 
   //On sort si le message vien d'un autre channel que Tabor:Annonces et Tabor:Patches
   if (
     message.channelId != patchesId &&
-    message.channelId != announceId &&
-    message.channelId != debugChannelId
+    message.channelId != announceId
+    // && message.channelId != debugChannelId
   ) {
-    console.error("🚨 Message ailleur quand dans les channel prévu");
+    console.warn("🚨 Message ailleur quand dans les channel prévu");
     return;
   }
 
   const msgTranslated = await translate(message.content);
-  console.log("🚀 ~ client.on ~ msgTranslated:", msgTranslated);
 
   switch (message.channelId) {
     case announceId:
