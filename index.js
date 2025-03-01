@@ -32,13 +32,13 @@ client.on("messageCreate", async (message) => {
     `Message reçu dans ${message.channelId} par ${message.author.tag} (id : ${message.author.id}) (webhookId: ${message.webhookId}) \n ${message.content}`
   );
 
-  // On sort si le message vien du bot
-  if (message.webhookId === "null") {
+  // On sort si le message ne vient pas d'un webhook
+  if (message.webhookId === null) {
     console.warn("🚧 Message interne skip...");
     return;
   }
 
-  //On sort si le message vien d'un autre channel que Tabor:Annonces et Tabor:Patches
+  //On sort si le message vient d'un autre channel que Tabor:Annonces et Tabor:Patches
   if (
     message.channelId != patchesId &&
     message.channelId != announceId
@@ -64,7 +64,7 @@ client.on("messageCreate", async (message) => {
   if (channel) {
     await channel
       .send(msgTranslated)
-      .then((message) => console.log(`Sent message: ${message.content}`))
+      .then((message) => console.log(`📤 Sent message: ${message.content}`))
       .catch(console.error);
     return;
   }
@@ -73,7 +73,7 @@ client.on("messageCreate", async (message) => {
 
 const translate = async (msg) => {
   const result = await translator.translateText(msg, "en", "fr");
-  console.log(`message traduit : \n ${result.text}`);
+  console.log(`🟦⬜🟥 message traduit : \n ${result.text}`);
   return result.text;
 };
 
