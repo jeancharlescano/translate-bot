@@ -45,16 +45,14 @@ export const command = {
             return interaction.replu({ content: "Invalid target language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
         }
         const deeplApiKey = interaction.options.getString("deepl_api_key");
-        // hash the API key for security with hash key and store it in db 
         const encrypted = AES.encrypt(deeplApiKey, process.env.PASSPHRASE).toString();
 
         try {
-            // channel_id en db est de type jsonb
             await pool.query("INSERT INTO config (server_id, channel_id, source_lang, target_lang, api_key) VALUES($1, $2, $3, $4, $5) ON CONFLICT (server_id) DO UPDATE SET channel_id = $2, source_lang = $3, target_lang = $4, api_key = $5",
                 [interaction.guild.id, JSON.stringify(channelsId), originalLang, translatedLang, encrypted]
             )
             console.log(`[${getTimestamp()}] ✅ Configuration sauvegardée pour le serveur ${interaction.guild.id}`)
-            await interaction.reply("Commande reçu ")
+            await interaction.reply({content: "✅ Configuration sauvegardée avec succès", ephemeral: true})
 
         } catch (error) {
             console.error(`[${getTimestamp()}] ❌ Error saving configuration: ${error.message}`)
