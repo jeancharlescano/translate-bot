@@ -8,42 +8,49 @@ export default {
   async execute(message, client ) {
 
     const serverData = await pool.query(`SELECT * FROM config WHERE server_id = $1`, [message.guildId])
-    console.log("🚀 ~ execute ~ serverData:", serverData.rows)
-    const announceId = "1220073639987249174";
-    const patchesId = "1220073409971621948";
-    const debugId = "1032291594000416840"
+
+    if (serverData.rows.length === 0) {
+      console.log("🧱 Message reçu mais configuration manquante pour le serveur ", message.guildId)
+      return
+    }
+
     console.log(
-      `[${getTimestamp()}] ✉️ Message reçu dans ${message.channelId} par ${message.author.tag} (id : ${message.author.id}) (webhookId: ${message.webhookId}) \n ${message.content}`
+      `[${getTimestamp()}] ✉️ Message reçu dans le channel ${message.channelId} par ${message.author.tag} (id : ${message.author.id}) (webhookId: ${message.webhookId}) \n ${message.content}`
     );
-    console.log(serverData.rows[0].channel_id)
-    // TODO Verifier finir ce if 
-    // if (serverData.rows[0].channel_id  message.channelId ) {
-    //   console.warn(`[${getTimestamp()}] 🚧 Message ailleurs que dans les channels prévus`);
-    //   return;
-    // }
 
-    // const msgTranslated = await translate(message.content);
-    // const channel = client.channels.cache.get(message.channelId);
+    if (message.author.tag === "Translate Bot#0591") {
+      console.log(`🙍‍♂️ Message du bot`)
+      return
+    }
 
-    // if (channel) {
-    //   const messageParts = splitMessage(msgTranslated);
+    if (!serverData.rows[0].channel_id.includes(message.channelId)) {
+      console.log(`[${getTimestamp()}] ➡️  Message ailleurs que dans les channels prévus`);
+      return;
+    }
 
-    //   try {
-    //     for (let i = 0; i < messageParts.length; i++) {
-    //       const content = messageParts[i];
+    const msgTranslated = await translate(message.content, serverData.rows[0].source_lang, serverData.rows[0].target_lang, serverData.rows[0].api_key);
 
-    //       await channel.send(content);
-    //       console.log(`[${getTimestamp()}] 📤 Sent message part ${i + 1}/${messageParts.length}: ${content.substring(0, 100)}...`);
+    const channel = client.channels.cache.get(message.channelId);
 
-    //       // Petite pause entre les messages pour éviter le rate limiting
-    //       if (i < messageParts.length - 1) {
-    //         await new Promise(resolve => setTimeout(resolve, 100));
-    //       }
-    //     }
-    //   } catch (err) {
-    //     console.log(`[${getTimestamp()}] 🚀 ~ err:`, err);
-    //   }
-    // }
+    if (channel) {
+      const messageParts = splitMessage(msgTranslated);
+
+      try {
+        for (let i = 0; i < messageParts.length; i++) {
+          const content = messageParts[i];
+
+          await channel.send(content);
+          console.log(`[${getTimestamp()}] 📤 Sent message part ${i + 1}/${messageParts.length}: ${content.substring(0, 100)}...`);
+
+          // Petite pause entre les messages pour éviter le rate limiting
+          if (i < messageParts.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+      } catch (err) {
+        console.log(`[${getTimestamp()}] 🚀 ~ err:`, err);
+      }
+    }
   }
 };
 

@@ -1,8 +1,8 @@
+import pkg from 'crypto-js';
 import { SlashCommandBuilder } from "discord.js";
 import getTimestamp from "../../utils/date.js";
 import { validateSourceLanguage, validateTargetLanguage } from "../../helper/validateLangage.js";
 import { pool } from "../../config/database.config.js";
-import pkg from 'crypto-js';
 const { AES } = pkg;
 export const command = {
     data: new SlashCommandBuilder()
@@ -37,12 +37,12 @@ export const command = {
 
         const originalLang = interaction.options.getString("original_lang");
         if (!validateSourceLanguage(originalLang)) {
-            return interaction.replu({ content: "Invalid original language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
+            return interaction.reply({ content: "Invalid original language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
         }
 
         const translatedLang = interaction.options.getString("translated_lang");
         if (!validateTargetLanguage(translatedLang)) {
-            return interaction.replu({ content: "Invalid target language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
+            return interaction.reply({ content: "Invalid target language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
         }
         const deeplApiKey = interaction.options.getString("deepl_api_key");
         const encrypted = AES.encrypt(deeplApiKey, process.env.PASSPHRASE).toString();
