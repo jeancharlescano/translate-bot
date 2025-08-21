@@ -10,7 +10,7 @@
     "prod": "node index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jean-Charles CANO",
   "license": "ISC",
   "dependencies": {
     "@discordjs/formatters": "^0.6.1",

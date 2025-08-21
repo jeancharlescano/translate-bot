@@ -9,6 +9,7 @@ export default {
 
     const serverData = await pool.query(`SELECT * FROM config WHERE server_id = $1`, [message.guildId])
 
+    // Check if guild's data exist in db 
     if (serverData.rows.length === 0) {
       console.log("🧱 Message reçu mais configuration manquante pour le serveur ", message.guildId)
       return
@@ -18,20 +19,24 @@ export default {
       `[${getTimestamp()}] ✉️ Message reçu dans le channel ${message.channelId} par ${message.author.tag} (id : ${message.author.id}) (webhookId: ${message.webhookId}) \n ${message.content}`
     );
 
+    // check if message's owner is the bot itself
     if (message.author.tag === "Translate Bot#0591") {
       console.log(`🙍‍♂️ Message du bot`)
       return
     }
 
+    // check if the messages is in the channel list in db
     if (!serverData.rows[0].channel_id.includes(message.channelId)) {
       console.log(`[${getTimestamp()}] ➡️  Message ailleurs que dans les channels prévus`);
       return;
     }
 
+    // translate the message
     const msgTranslated = await translate(message.content, serverData.rows[0].source_lang, serverData.rows[0].target_lang, serverData.rows[0].api_key);
 
     const channel = client.channels.cache.get(message.channelId);
 
+    // split the message into parts if it's too long 
     if (channel) {
       const messageParts = splitMessage(msgTranslated);
 

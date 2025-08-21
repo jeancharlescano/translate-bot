@@ -1,5 +1,5 @@
 import pkg from 'crypto-js';
-import { SlashCommandBuilder } from "discord.js";
+import { PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import getTimestamp from "../../utils/date.js";
 import { validateSourceLanguage, validateTargetLanguage } from "../../helper/validateLangage.js";
 import { pool } from "../../config/database.config.js";
@@ -24,7 +24,7 @@ export const command = {
             option.setName("deepl_api_key")
                 .setDescription("Your DeepL API Key")
                 .setRequired(true)
-        ),
+        ).setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) {
         console.log("🚀 ~ execute ~ interaction.guild.id:", interaction.guild.id)
@@ -32,18 +32,22 @@ export const command = {
 
         // Validate channel IDs
         if (!channelsId.every(id => /^\d+$/.test(id))) {
-            return interaction.reply({ content: "Invalid channel ID format. Please provide a comma-separated list of valid channel IDs.", ephemeral: true })
+            return interaction.reply({ content: "❌ Invalid channel ID format. Please provide a comma-separated list of valid channel IDs.", ephemeral: true })
         }
 
+        // Validate source language format
         const originalLang = interaction.options.getString("original_lang");
         if (!validateSourceLanguage(originalLang)) {
-            return interaction.reply({ content: "Invalid original language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
+            return interaction.reply({ content: "❌ Invalid original language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
         }
-
+        
+        // Validate target language format
         const translatedLang = interaction.options.getString("translated_lang");
         if (!validateTargetLanguage(translatedLang)) {
-            return interaction.reply({ content: "Invalid target language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
+            return interaction.reply({ content: "❌ Invalid target language. Please provide a valid language code. Refer to : https://developers.deepl.com/docs/getting-started/supported-languages ", ephemeral: true })
         }
+
+        // encrypt deepl API key
         const deeplApiKey = interaction.options.getString("deepl_api_key");
         const encrypted = AES.encrypt(deeplApiKey, process.env.PASSPHRASE).toString();
 
@@ -56,7 +60,7 @@ export const command = {
 
         } catch (error) {
             console.error(`[${getTimestamp()}] ❌ Error saving configuration: ${error.message}`)
-            return interaction.reply({ content: "An error occured whiles saving the configuration. Please try again later.", ephemeral: true })
+            return interaction.reply({ content: "❌ An error occured whiles saving the configuration. Please try again later.", ephemeral: true })
         }
     }
 }
