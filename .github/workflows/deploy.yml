@@ -24,9 +24,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Copie dans le dossier du projet
-        run: cp -rf /home/github/actions-runner/_work/bloc-notes-bot/bloc-notes-bot/. /home/github/bloc-notes-bot
+        run: cp -rf /home/github/actions-runner/_work/translate-bot/translate-bot/. /home/github/translate-bot
 
       - name: Installation des dépendance
         run: |
-          cp -rf /home/github/actions-runner/_work/bloc-notes-bot/bloc-notes-bot/. /home/github/bloc-notes-bot
-          cd /home/github/bloc-notes-bot && pwd && npm i
+          cp -rf /home/github/actions-runner/_work/translate-bot/translate-bot/. /home/github/translate-bot
+          cd /home/github/translate-bot && pwd && npm i
