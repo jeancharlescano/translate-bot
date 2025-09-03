@@ -1,9 +1,40 @@
+// Langues supportées par DeepL (codes ISO)
+const DEEPL_LANGUAGES = ["AR", "BG", "CS", "DA", "DE", "EL", "EN", "ES", "ET", "FI", "FR", "HE", "HU", "ID", "IT", "JA", "KO", "LT", "LV", "NB", "NL", "PL", "PT", "RO", "RU", "SK", "SL", "SV", "TH", "TR", "UK", "VI", "ZH"];
+
+// Langues supportées par Reverso (noms en anglais)
+const REVERSO_LANGUAGES = ["arabic", "bulgarian", "czech", "danish", "german", "greek", "english", "spanish", "estonian", "finnish", "french", "hebrew", "hungarian", "indonesian", "italian", "japanese", "korean", "lithuanian", "latvian", "norwegian", "dutch", "polish", "portuguese", "romanian", "russian", "slovak", "slovenian", "swedish", "thai", "turkish", "ukrainian", "vietnamese", "chinese"];
+
 export const validateSourceLanguage = (lang) => {
-    const validLanguages = ["AR", "BG", "CS", "DA", "DE", "EL", "EN", "ES", "ET", "FI", "FR", "HE", "HU", "ID", "IT", "JA", "KO", "LT", "LV", "NB", "NL", "PL", "PT", "RO", "RU", "SK", "SL", "SV", "TH", "TR", "UK", "VI", "ZH"]
-    return validLanguages.includes(lang.toUpperCase())
+    // Vérifier si c'est un code DeepL (majuscules)
+    if (DEEPL_LANGUAGES.includes(lang.toUpperCase())) {
+        return true;
+    }
+    // Vérifier si c'est une langue Reverso (minuscules)
+    if (REVERSO_LANGUAGES.includes(lang.toLowerCase())) {
+        return true;
+    }
+    return false;
 }
 
 export const validateTargetLanguage = (lang) => {
-    const validLanguages = ["AR", "BG", "CS", "DA", "DE", "EL", "EN", "EN-GB", "EN-US", "ES", "ES-419", "ET", "FI", "FR", "HE", "HU", "ID", "IT", "JA", "KO", "LT", "LV", "NB", "NL", "PL", "PT", "PT-BR", "PT-PT", "RO", "RU", "SK", "SL", "SV", "TH", "TR", "UK", "VI", "ZH", "ZH-HANS", "ZH-HANT"]
-    return validLanguages.includes(lang.toUpperCase())
+    // Langues cibles DeepL (inclut les variantes)
+    const deeplTargetLanguages = ["AR", "BG", "CS", "DA", "DE", "EL", "EN", "EN-GB", "EN-US", "ES", "ES-419", "ET", "FI", "FR", "HE", "HU", "ID", "IT", "JA", "KO", "LT", "LV", "NB", "NL", "PL", "PT", "PT-BR", "PT-PT", "RO", "RU", "SK", "SL", "SV", "TH", "TR", "UK", "VI", "ZH", "ZH-HANS", "ZH-HANT"];
+    
+    // Vérifier si c'est un code DeepL (majuscules)
+    if (deeplTargetLanguages.includes(lang.toUpperCase())) {
+        return true;
+    }
+    // Vérifier si c'est une langue Reverso (minuscules)
+    if (REVERSO_LANGUAGES.includes(lang.toLowerCase())) {
+        return true;
+    }
+    return false;
+}
+
+// Fonction pour obtenir la liste des langues supportées pour l'aide
+export const getSupportedLanguages = () => {
+    return {
+        deepl: DEEPL_LANGUAGES,
+        reverso: REVERSO_LANGUAGES
+    };
 }
