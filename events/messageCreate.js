@@ -31,7 +31,7 @@ export default {
       return;
     }
 
-    // translate the message
+    // translate the message (will automatically choose between DeepL and Reverso based on API key presence)
     const msgTranslated = await translate(message.content, serverData.rows[0].source_lang, serverData.rows[0].target_lang, serverData.rows[0].api_key);
 
     const channel = client.channels.cache.get(message.channelId);

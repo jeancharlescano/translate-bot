@@ -17,15 +17,23 @@ export default {
 
 I am a bot that translates messages into the language you want.
 
-${bold("Requirements")}
+${bold("Two Translation Options")}
+
+${bold("Option 1: DeepL (Premium)")}
 - Create an account here: https://www.deepl.com/fr/signup
 - Get your API key here: https://www.deepl.com/fr/your-account/keys
+- Use language codes like: "EN", "FR", "DE", "ES", etc.
+
+${bold("Option 2: Reverso (Free)")}
+- No account needed!
+- Leave the API key field empty
+- Use language names like: "english", "french", "german", "spanish", etc.
 
 ${bold("Configuration")}
 - Param ${italic("channels Id")} : list of channels where the bot will listen and translate messages.
-- Param ${italic("original Lang")} : the language of the original message (ex: "en" for English).
-- Param ${italic("translated Lang")} : the language of the translation (ex: "fr" for French).
-- Param ${italic("deepl Api Key")} : your DeepL API Key.
+- Param ${italic("original Lang")} : the language of the original message.
+- Param ${italic("translated Lang")} : the language of the translation.
+- Param ${italic("deepl Api Key")} : your DeepL API Key (optional - leave empty for Reverso).
 
 Please use the command ${codeBlock("/config")}`
             );
