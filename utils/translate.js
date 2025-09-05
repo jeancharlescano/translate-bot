@@ -1,5 +1,4 @@
 import * as deepl from "deepl-node";
-import Reverso from "reverso-api";
 import dotenv from "dotenv";
 import getTimestamp from "./date.js";
 import pkg from 'crypto-js';
@@ -7,54 +6,54 @@ const { AES, enc } = pkg;
 
 dotenv.config();
 
-// Mapping des codes de langue DeepL vers les noms de langue Reverso
-const DEEPL_TO_REVERSO_LANG = {
-  "AR": "arabic",
-  "BG": "bulgarian",
-  "CS": "czech",
-  "DA": "danish",
-  "DE": "german",
-  "EL": "greek",
-  "EN": "english",
-  "EN-GB": "english",
-  "EN-US": "english",
-  "ES": "spanish",
-  "ES-419": "spanish",
-  "ET": "estonian",
-  "FI": "finnish",
-  "FR": "french",
-  "HE": "hebrew",
-  "HU": "hungarian",
-  "ID": "indonesian",
-  "IT": "italian",
-  "JA": "japanese",
-  "KO": "korean",
-  "LT": "lithuanian",
-  "LV": "latvian",
-  "NB": "norwegian",
-  "NL": "dutch",
-  "PL": "polish",
-  "PT": "portuguese",
-  "PT-BR": "portuguese",
-  "PT-PT": "portuguese",
-  "RO": "romanian",
-  "RU": "russian",
-  "SK": "slovak",
-  "SL": "slovenian",
-  "SV": "swedish",
-  "TH": "thai",
-  "TR": "turkish",
-  "UK": "ukrainian",
-  "VI": "vietnamese",
-  "ZH": "chinese",
-  "ZH-HANS": "chinese",
-  "ZH-HANT": "chinese"
+// Mapping des codes de langue DeepL vers les codes ISO LibreTranslate
+const DEEPL_TO_LIBRE_LANG = {
+  "AR": "ar",
+  "BG": "bg",
+  "CS": "cs",
+  "DA": "da",
+  "DE": "de",
+  "EL": "el",
+  "EN": "en",
+  "EN-GB": "en",
+  "EN-US": "en",
+  "ES": "es",
+  "ES-419": "es",
+  "ET": "et",
+  "FI": "fi",
+  "FR": "fr",
+  "HE": "he",
+  "HU": "hu",
+  "ID": "id",
+  "IT": "it",
+  "JA": "ja",
+  "KO": "ko",
+  "LT": "lt",
+  "LV": "lv",
+  "NB": "no",
+  "NL": "nl",
+  "PL": "pl",
+  "PT": "pt",
+  "PT-BR": "pt",
+  "PT-PT": "pt",
+  "RO": "ro",
+  "RU": "ru",
+  "SK": "sk",
+  "SL": "sl",
+  "SV": "sv",
+  "TH": "th",
+  "TR": "tr",
+  "UK": "uk",
+  "VI": "vi",
+  "ZH": "zh",
+  "ZH-HANS": "zh",
+  "ZH-HANT": "zh"
 };
 
 export const translate = async (msg, original_lang, translated_lang, deeplApiKey) => {
-  // Si pas de clé API DeepL, utiliser Reverso
+  // Si pas de clé API DeepL, utiliser LibreTranslate
   if (!deeplApiKey || deeplApiKey.trim() === '') {
-    return await translateWithReverso(msg, original_lang, translated_lang);
+    return await translateWithLibreTranslate(msg, original_lang, translated_lang);
   }
 
   // Sinon, utiliser DeepL comme avant
@@ -77,34 +76,44 @@ export const translate = async (msg, original_lang, translated_lang, deeplApiKey
   return result.text;
 };
 
-export const translateWithReverso = async (msg, original_lang, translated_lang) => {
+export const translateWithLibreTranslate = async (msg, original_lang, translated_lang) => {
   try {
-    const reverso = new Reverso();
+    const endpoint = 'https://translate.jccano.fr/translate';
 
-    // Convertir les codes de langue DeepL en noms de langue Reverso
-    const sourceLang = DEEPL_TO_REVERSO_LANG[original_lang.toUpperCase()] || original_lang.toLowerCase();
-    const targetLang = DEEPL_TO_REVERSO_LANG[translated_lang.toUpperCase()] || translated_lang.toLowerCase();
+    const sourceLang = DEEPL_TO_LIBRE_LANG[original_lang.toUpperCase()] || original_lang.split('-')[0].toLowerCase();
+    const targetLang = DEEPL_TO_LIBRE_LANG[translated_lang.toUpperCase()] || translated_lang.split('-')[0].toLowerCase();
 
-    console.log(`[${getTimestamp()}] 🔄 Traduction avec Reverso: ${sourceLang} -> ${targetLang}`);
+    console.log(`[${getTimestamp()}] 🔄 Traduction avec LibreTranslate (jccano.fr): ${sourceLang} -> ${targetLang}`);
     console.log(`[${getTimestamp()}] 📝 Message à traduire: "${msg}"`);
 
-    // Utiliser la syntaxe Promise (sans callback)
-    const result = await reverso.getTranslation(msg, sourceLang, targetLang);
+    const body = {
+      q: msg,
+      source: sourceLang,
+      target: targetLang
+    };
 
-    console.log(`[${getTimestamp()}] 🔍 Réponse Reverso:`, JSON.stringify(result, null, 2));
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
 
-    // Récupérer le premier élément du tableau translations
-    if (result && result.translations && Array.isArray(result.translations) && result.translations.length > 0) {
-      const translatedText = result.translations[0];
-      console.log(`[${getTimestamp()}] 🌐 message traduit avec Reverso : \n ${translatedText}`);
-      return translatedText;
-    } else {
-      throw new Error("Aucune traduction trouvée dans le tableau translations");
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`LibreTranslate HTTP ${response.status}: ${text}`);
     }
 
+    const data = await response.json();
+    if (data && typeof data.translatedText === 'string') {
+      console.log(`[${getTimestamp()}] 🌐 message traduit avec LibreTranslate (jccano.fr) : \n ${data.translatedText}`);
+      return data.translatedText;
+    }
+    throw new Error('Réponse LibreTranslate invalide');
   } catch (error) {
-    console.error(`[${getTimestamp()}] ❌ Erreur lors de la traduction avec Reverso:`, error.message);
+    console.error(`[${getTimestamp()}] ❌ Erreur lors de la traduction avec LibreTranslate:`, error.message);
     console.error(`[${getTimestamp()}] ❌ Stack trace:`, error.stack);
-    throw new Error(`Erreur de traduction Reverso: ${error.message}`);
+    throw new Error(`Erreur de traduction LibreTranslate: ${error.message}`);
   }
 };
