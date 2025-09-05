@@ -48,3 +48,24 @@ export async function deployCommands(guildId) {
         console.error(error);
     }
 };
+
+export async function deployAllGuildCommands(client) {
+    try {
+        const commands = await loadCommands();
+        console.log(`[${getTimestamp()}] 🏁 Started refreshing ${commands.length} (/) commands in all guilds.`);
+
+        for (const [guildId] of client.guilds.cache) {
+            try {
+                const data = await rest.put(
+                    Routes.applicationGuildCommands(process.env.CLIENTID, guildId),
+                    { body: commands },
+                );
+                console.log(`[${getTimestamp()}] ✔ Reloaded ${data.length} commands in guild ${guildId}`);
+            } catch (err) {
+                console.error(`[${getTimestamp()}] ❌ Failed to reload commands in guild ${guildId}:`, err);
+            }
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
