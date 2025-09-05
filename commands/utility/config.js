@@ -22,7 +22,7 @@ export const command = {
                 .setRequired(true)
         )        .addStringOption(option =>
             option.setName("deepl_api_key")
-                .setDescription("Your DeepL API Key (optional - leave empty to use Reverso)")
+                .setDescription("Your DeepL API Key (optional - leave empty to use completely free service)")
                 .setRequired(false)
         ).setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
@@ -40,7 +40,7 @@ export const command = {
         if (!validateSourceLanguage(originalLang)) {
             const supportedLangs = getSupportedLanguages();
             return interaction.reply({ 
-                content: `❌ Invalid original language. Please provide a valid language code.\n\n**DeepL codes:** ${supportedLangs.deepl.slice(0, 10).join(', ')}...\n**Reverso languages:** ${supportedLangs.reverso.slice(0, 10).join(', ')}...`, 
+                content: `❌ Invalid original language. Please provide a valid language code.\n\n**DeepL codes:** ${supportedLangs.deepl.slice(0, 10).join(', ')}...\n**Custom service languages:** ${supportedLangs.customService.slice(0, 10).join(', ')}...`, 
                 ephemeral: true 
             })
         }
@@ -50,7 +50,7 @@ export const command = {
         if (!validateTargetLanguage(translatedLang)) {
             const supportedLangs = getSupportedLanguages();
             return interaction.reply({ 
-                content: `❌ Invalid target language. Please provide a valid language code.\n\n**DeepL codes:** ${supportedLangs.deepl.slice(0, 10).join(', ')}...\n**Reverso languages:** ${supportedLangs.reverso.slice(0, 10).join(', ')}...`, 
+                content: `❌ Invalid target language. Please provide a valid language code.\n\n**DeepL codes:** ${supportedLangs.deepl.slice(0, 10).join(', ')}...\n**Custom service languages:** ${supportedLangs.customService.slice(0, 10).join(', ')}...`, 
                 ephemeral: true 
             })
         }
@@ -69,7 +69,7 @@ export const command = {
                 [interaction.guild.id, JSON.stringify(channelsId), originalLang, translatedLang, encrypted]
             )
             
-            const serviceUsed = encrypted ? "DeepL" : "Reverso";
+            const serviceUsed = encrypted ? "DeepL" : "Custom";
             console.log(`[${getTimestamp()}] ✅ Configuration sauvegardée pour le serveur ${interaction.guild.id} avec ${serviceUsed}`)
             await interaction.reply({
                 content: `✅ Configuration sauvegardée avec succès !\n\n**Service de traduction:** ${serviceUsed}\n**Langue source:** ${originalLang}\n**Langue cible:** ${translatedLang}`, 

@@ -24,7 +24,7 @@ ${bold("Option 1: DeepL (Premium)")}
 - Get your API key here: https://www.deepl.com/fr/your-account/keys
 - Use language codes like: "EN", "FR", "DE", "ES", etc.
 
-${bold("Option 2: Reverso (Free)")}
+${bold("Option 2: Custom Service (Free)")}
 - No account needed!
 - Leave the API key field empty
 - Use language names like: "english", "french", "german", "spanish", etc.
@@ -33,7 +33,7 @@ ${bold("Configuration")}
 - Param ${italic("channels Id")} : list of channels where the bot will listen and translate messages.
 - Param ${italic("original Lang")} : the language of the original message.
 - Param ${italic("translated Lang")} : the language of the translation.
-- Param ${italic("deepl Api Key")} : your DeepL API Key (optional - leave empty for Reverso).
+- Param ${italic("deepl Api Key")} : your DeepL API Key (optional - leave empty for Custom Service).
 
 Please use the command ${codeBlock("/config")}`
             );
